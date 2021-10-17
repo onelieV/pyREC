@@ -6,7 +6,10 @@ Created on: 2021/3/29
 import ray
 import math
 import random
+import warnings
 from sklearn.model_selection import cross_val_score
+
+warnings.filterwarnings('ignore')
 
 
 def envelope(X, y, clf, cv):
@@ -106,9 +109,10 @@ class DiREC(object):
         T = []  # 任务队列 item=(eva, subset)
         R = []  # worker返回的结果Refs队列
 
-        ray.init()  # ray初始化, 单机运行时用
+        # ray.init()  # ray初始化, 单机运行时用
+        ray.init(address='auto')  # Dos建立集群时用
         evar_ref = ray.put(evar)  # 将评估函数封装好并放入ObjectStore中，方便远程调用
-        n_p = ray.available_resources()['CPU']  # n_p
+        n_p = int(ray.available_resources()['CPU'])  # n_p
         print('Available CPU:', n_p)
         print('Required processor:', self.n_processor)
         n_p = min(n_p, self.n_processor)
@@ -138,7 +142,6 @@ class DiREC(object):
             #     period += 1
             #     T.append(p)
             ################################################################
-
         ray.shutdown()  # 关闭ray服务
         return p
 
@@ -154,14 +157,14 @@ if __name__ == '__main__':
     warnings.filterwarnings('ignore')
     sys.path.insert(0, '..')  # 使得在命令行运行时可以找到自己的模块(设置工作路径)
 
-    dataset_name = 'Arcene'
+    dataset_name = 'Wine'
     X, y = load_ds_name(dataset_name)
     clf = KNeighborsClassifier(n_neighbors=5)
-    cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
 
     start_time = time.time()
 
-    slctr = DiREC(X, y, clf, cv, dataset_name)
+    slctr = DiREC(X, y, clf, cv, dataset_name, )
     opt = slctr.fit()
 
     print(" 最优子集：{}".format(opt))

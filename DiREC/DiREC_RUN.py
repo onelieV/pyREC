@@ -16,10 +16,10 @@ DATASETS = [
     # 'Ionosphere',
     # 'Spectf',
     # 'Sonar',
-    # ##############################
+    ##############################
     # 'HillValley',
     # 'Musk1',
-    'Madelon',
+    # 'Madelon',
     # 'Isolet5',
     # ##############################
     # 'Yale',
@@ -33,6 +33,7 @@ DATASETS = [
 
 if __name__ == '__main__':
     for ds in DATASETS:
-        # go_FS(DiREC, ds, method_name="DiREC4", n_processor=4)  # 使用笔记本4个逻辑处理器
-        go_FS(DiREC, ds, method_name="DiREC8", n_processor=8)  # 使用笔记本8个逻辑处理器
-        # go_FS(DiREC, ds, method_name="DiREC16",  n_processor=16)  # 使用笔记本16个逻辑处理器
+        # 必须要手动建立集群之后才能运行
+        go_FS(DiREC, ds, method_name="DiREC8", n_processor=8)  # 使用8个逻辑核
+        go_FS(DiREC, ds, method_name="DiREC16", n_processor=16)  # 使用16个逻辑核
+        go_FS(DiREC, ds, method_name="DiREC24", n_processor=24)  # 使用24个逻辑核
